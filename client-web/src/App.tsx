@@ -8,7 +8,7 @@ import {
   ServerCrash,
   CalendarX2,
   LayoutDashboard,
-  BookMarked,
+  CalendarDays,
 } from 'lucide-react';
 
 import { MeetingCard } from './components/MeetingCard';
@@ -48,7 +48,6 @@ export default function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [cancellingId, setCancellingId] = useState<number | null>(null);
 
-  // Fetch list + stats
   const fetchAll = useCallback(async () => {
     setLoading(true);
     setStatsLoading(true);
@@ -62,7 +61,7 @@ export default function App() {
       setMeetings(meetingsRes.data);
       setStats(statsRes.data);
     } catch {
-      setError('Cannot connect to server. Please run `npm run server` first.');
+      setError('无法连接到服务器。请确保后端服务 (npm run server) 已启动。');
     } finally {
       setLoading(false);
       setStatsLoading(false);
@@ -71,27 +70,24 @@ export default function App() {
 
   useEffect(() => {
     fetchAll();
-    // Auto-refresh every 30 seconds
     const interval = setInterval(fetchAll, 30_000);
     return () => clearInterval(interval);
   }, [fetchAll]);
 
-  // Cancel / Delete
   const handleCancel = async (id: number) => {
-    if (!window.confirm(`Cancel booking #${id}? This cannot be undone.`)) return;
+    if (!window.confirm(`确定取消编号为 #${id} 的会议预约吗？此操作无法撤销。`)) return;
     setCancellingId(id);
     try {
       await axios.delete(`${API_BASE}/meetings/${id}`);
       setMeetings(prev => prev.filter(m => m.id !== id));
       setStats(prev => prev ? { ...prev, total: prev.total - 1 } : null);
     } catch {
-      alert('Failed to cancel booking. Please try again.');
+      alert('操作失败，请重试。');
     } finally {
       setCancellingId(null);
     }
   };
 
-  // Filtered list
   const filtered = meetings.filter(m => {
     if (!search) return true;
     const q = search.toLowerCase();
@@ -105,63 +101,51 @@ export default function App() {
   return (
     <div className="flex min-h-screen bg-[#080c14] text-slate-200 font-sans">
       {/* ── Sidebar ──────────────────────────────────────── */}
-      <aside className="fixed left-0 top-0 h-full w-[72px] flex flex-col items-center py-6 gap-8 bg-[#0c1120]/80 backdrop-blur-xl border-r border-slate-800/50 z-30">
-        {/* Logo */}
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-500 to-violet-600 flex items-center justify-center shadow-lg shadow-sky-500/20 flex-shrink-0">
-          <svg viewBox="0 0 24 24" className="w-5 h-5 text-white" fill="none" stroke="currentColor" strokeWidth="2.5">
+      <aside className="fixed left-0 top-0 h-full w-[80px] flex flex-col items-center py-8 gap-10 bg-[#0c1120]/80 backdrop-blur-3xl border-r border-slate-800/50 z-30 shadow-2xl">
+        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-sky-500 to-violet-600 flex items-center justify-center shadow-lg shadow-sky-500/20 flex-shrink-0">
+          <svg viewBox="0 0 24 24" className="w-6 h-6 text-white" fill="none" stroke="currentColor" strokeWidth="3">
             <rect x="3" y="4" width="18" height="18" rx="2" />
             <path d="M16 2v4M8 2v4M3 10h18" />
           </svg>
         </div>
 
-        {/* Nav Icons */}
-        <nav className="flex flex-col gap-5 mt-2">
-          <button className="p-2.5 rounded-xl bg-sky-500/15 text-sky-400 border border-sky-500/25" title="Dashboard">
-            <LayoutDashboard className="w-5 h-5" />
+        <nav className="flex flex-col gap-6 mt-4">
+          <button className="p-3.5 rounded-2xl bg-sky-500/20 text-sky-400 border border-sky-500/30 shadow-inner" title="概览仪表盘">
+            <LayoutDashboard className="w-6 h-6" />
           </button>
-          <button className="p-2.5 rounded-xl text-slate-500 hover:text-slate-300 hover:bg-slate-800/60 transition-all" title="Bookings">
-            <BookMarked className="w-5 h-5" />
+          <button className="p-3.5 rounded-2xl text-slate-600 hover:text-slate-300 hover:bg-slate-800/60 transition-all" title="预约记录">
+            <CalendarDays className="w-6 h-6" />
           </button>
         </nav>
 
-        {/* Status dot */}
-        <div className="mt-auto mb-2 flex flex-col items-center gap-1">
-          <div className={`w-2 h-2 rounded-full ${error ? 'bg-red-400' : 'bg-emerald-400 animate-pulse'}`} />
-          <span className="text-[9px] text-slate-600 uppercase tracking-widest">{error ? 'Offline' : 'Live'}</span>
+        <div className="mt-auto mb-4 flex flex-col items-center gap-2">
+          <div className={`w-2.5 h-2.5 rounded-full ${error ? 'bg-red-500' : 'bg-emerald-500 animate-pulse'}`} />
+          <span className="text-[9px] text-slate-600 font-black uppercase tracking-widest">{error ? '离线' : '服务正常'}</span>
         </div>
       </aside>
 
-      {/* ── Main ─────────────────────────────────────────── */}
-      <main className="ml-[72px] flex-1 p-6 md:p-10 max-w-6xl w-full">
+      {/* ── Main (WIDER CONTAINER) ────────────────────── */}
+      <main className="ml-[80px] flex-1 p-8 md:p-12 max-w-7xl mx-auto w-full">
 
         {/* Header */}
-        <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-10">
+        <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-12">
           <div>
-            <motion.h1
-              initial={{ opacity: 0, x: -16 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="text-2xl md:text-3xl font-bold text-white tracking-tight"
-            >
-              Meeting Dashboard
+            <motion.h1 initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="text-3xl md:text-4xl font-black text-white tracking-tight">
+              会议室预约看板
             </motion.h1>
-            <p className="text-slate-500 text-sm mt-1">Real-time gRPC-powered room management</p>
+            <p className="text-slate-500 font-bold text-sm mt-2 tracking-wide uppercase">Real-time room management dashboard</p>
           </div>
 
-          <div className="flex items-center gap-3">
-            <button
-              onClick={fetchAll}
-              disabled={loading}
-              className="p-2.5 rounded-xl border border-slate-700/50 hover:border-slate-600 text-slate-400 hover:text-white transition-all"
-              title="Refresh"
-            >
-              <RefreshCcw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+          <div className="flex items-center gap-4">
+            <button onClick={fetchAll} disabled={loading} className="p-3.5 rounded-2xl border border-slate-700/50 hover:bg-slate-800/40 text-slate-400 hover:text-white transition-all shadow-sm">
+              <RefreshCcw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
             </button>
             <button
               onClick={() => setIsModalOpen(true)}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white text-sm font-semibold shadow-lg shadow-sky-500/25 transition-all"
+              className="flex items-center gap-2.5 px-7 py-3.5 rounded-2xl bg-sky-500 hover:bg-sky-400 text-white text-sm font-black shadow-xl shadow-sky-500/30 transition-all hover:scale-[1.02] active:scale-95"
             >
-              <Plus className="w-4 h-4" />
-              New Booking
+              <Plus className="w-5 h-5" />
+              新建会议预约
             </button>
           </div>
         </header>
@@ -169,77 +153,60 @@ export default function App() {
         {/* Stats */}
         <StatsBar stats={stats} loading={statsLoading} />
 
-        {/* Search + list section */}
+        {/* Search + Section Header */}
         <section>
-          <div className="flex items-center justify-between mb-5 gap-4 flex-wrap">
-            <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-widest">
-              All Reservations
+          <div className="flex items-center justify-between mb-8 gap-6 flex-wrap">
+            <h2 className="text-xs font-black text-slate-500 uppercase tracking-[0.2em] flex items-center gap-3">
+              <span className="w-8 h-px bg-slate-800"></span>
+              当前预约记录
               {!loading && (
-                <span className="ml-2 text-slate-600 font-normal normal-case tracking-normal">
-                  ({filtered.length} shown)
+                <span className="text-slate-700 font-bold lowercase tracking-normal bg-slate-800/50 px-2 py-0.5 rounded-md">
+                  {filtered.length}
                 </span>
               )}
             </h2>
 
-            {/* Search */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+            <div className="relative group">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-600 group-focus-within:text-sky-400 transition-colors" />
               <input
                 type="text"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                placeholder="Search by subject, organizer, or room..."
-                className="pl-9 pr-4 py-2 bg-slate-800/50 border border-slate-700/50 rounded-xl text-sm text-white placeholder-slate-600 focus:outline-none focus:border-sky-500/50 focus:ring-1 focus:ring-sky-500/20 w-64 transition-all"
+                placeholder="搜索主题、预约人或会议室..."
+                className="pl-12 pr-6 py-3.5 bg-slate-800/40 border border-slate-700/50 rounded-2xl text-sm text-white placeholder-slate-700 focus:outline-none focus:border-sky-500/40 focus:ring-4 focus:ring-sky-500/5 w-80 transition-all"
               />
             </div>
           </div>
 
-          {/* Error */}
           <AnimatePresence>
             {error && (
-              <motion.div
-                initial={{ opacity: 0, y: -8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                className="flex items-center gap-3 p-4 rounded-xl bg-red-500/8 border border-red-500/20 text-red-400 mb-6"
-              >
-                <ServerCrash className="w-5 h-5 flex-shrink-0" />
-                <span className="text-sm">{error}</span>
+              <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-4 p-5 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-500 mb-8 font-bold text-sm">
+                <ServerCrash className="w-6 h-6" />
+                <span>{error}</span>
               </motion.div>
             )}
           </AnimatePresence>
 
-          {/* Empty state */}
           {!loading && !error && filtered.length === 0 && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="flex flex-col items-center justify-center py-24 text-slate-600"
-            >
-              <CalendarX2 className="w-12 h-12 mb-4 opacity-40" />
-              <p className="text-base font-medium">
-                {search ? 'No meetings match your search.' : 'No bookings yet.'}
-              </p>
-              {!search && (
-                <p className="text-sm mt-1 opacity-60">
-                  Click "New Booking" or use the CLI to add one.
-                </p>
-              )}
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center py-32 text-slate-700">
+              <CalendarX2 className="w-16 h-16 mb-6 opacity-30 stroke-[1]" />
+              <p className="text-lg font-bold">没有找到相关的会议记录</p>
+              {!search && <p className="text-sm mt-2 opacity-50 font-medium">点击“新建会议预约”开始添加第一个行程</p>}
             </motion.div>
           )}
 
-          {/* Loading skeleton */}
+          {/* Loading Grid */}
           {loading && (
-            <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[0, 1, 2].map(i => (
-                <div key={i} className="glass rounded-2xl p-5 animate-pulse border border-slate-800/60 h-20" />
+                <div key={i} className="glass rounded-3xl p-6 h-64 animate-pulse border border-slate-800/60" />
               ))}
             </div>
           )}
 
-          {/* Meeting cards */}
+          {/* 🌟 MEETING CARDS GRID VIEW */}
           {!loading && (
-            <div className="space-y-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <AnimatePresence mode="popLayout">
                 {filtered.map((meeting, idx) => (
                   <MeetingCard
@@ -256,12 +223,7 @@ export default function App() {
         </section>
       </main>
 
-      {/* Booking Modal */}
-      <BookingModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSuccess={fetchAll}
-      />
+      <BookingModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onSuccess={fetchAll} />
     </div>
   );
 }
