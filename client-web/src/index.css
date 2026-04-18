@@ -1,0 +1,90 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* ─── Tailwind v4 Theme ──────────────────────────────── */
+@theme {
+  --color-brand-50: oklch(97.6% 0.013 236.6);
+  --color-brand-100: oklch(95.1% 0.026 236.6);
+  --color-brand-200: oklch(90.1% 0.052 236.6);
+  --color-brand-300: oklch(82.8% 0.096 236.6);
+  --color-brand-400: oklch(73.3% 0.139 236.6);
+  --color-brand-500: oklch(62.3% 0.179 236.6);
+  --color-brand-600: oklch(53% 0.188 236.6);
+  --color-brand-700: oklch(44.4% 0.173 236.6);
+  --color-brand-800: oklch(36.6% 0.146 236.6);
+  --color-brand-900: oklch(29% 0.112 236.6);
+}
+
+
+/* ─── Base ───────────────────────────────────────────── */
+:root {
+  --bg-primary: #080c14;
+  --bg-card: rgba(14, 20, 32, 0.75);
+  --border-subtle: rgba(255, 255, 255, 0.05);
+  --brand: #0ea5e9;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: var(--bg-primary);
+  color: #e2e8f0;
+}
+
+/* ─── Glassmorphism ──────────────────────────────────── */
+.glass {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-subtle);
+}
+
+/* ─── Custom Scrollbar ───────────────────────────────── */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #334155;
+}
+
+/* ─── Input dark mode calendar ───────────────────────── */
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.6);
+  cursor: pointer;
+}
+
+/* ─── Subtle grid background ─────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(14, 165, 233, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(14, 165, 233, 0.015) 1px, transparent 1px);
+  background-size: 64px 64px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+#root {
+  position: relative;
+  z-index: 1;
+}

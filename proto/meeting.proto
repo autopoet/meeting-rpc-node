@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package meeting;
+
+// Meeting Service Definition
+service MeetingService {
+  // Book a meeting room
+  rpc BookMeeting (Meeting) returns (BookResponse);
+  
+  // Query booking info by ID
+  rpc QueryById (QueryByIdRequest) returns (Meeting);
+  
+  // Query all bookings by organizer name
+  rpc QueryByOrganizer (QueryByOrganizerRequest) returns (MeetingList);
+  
+  // Cancel a specific meeting
+  rpc CancelMeeting (CancelMeetingRequest) returns (CancelResponse);
+}
+
+// Meeting Data Structure (Appointment)
+message Meeting {
+  int32 id = 1;
+  string organizer = 2;
+  string roomName = 3;
+  string subject = 4;
+  string startTime = 5; // ISO 8601 string
+  string endTime = 6;   // ISO 8601 string
+  int32 participants = 7;
+}
+
+message BookResponse {
+  bool success = 1;
+  string message = 2;
+  int32 meetingId = 3;
+}
+
+message QueryByIdRequest {
+  int32 meetingId = 1;
+}
+
+message QueryByOrganizerRequest {
+  string organizerName = 1;
+}
+
+message MeetingList {
+  repeated Meeting meetings = 1;
+}
+
+message CancelMeetingRequest {
+  int32 meetingId = 1;
+}
+
+message CancelResponse {
+  bool success = 1;
+  string message = 2;
+}
