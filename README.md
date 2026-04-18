@@ -4,7 +4,7 @@
 
 ---
 
-## 🚀 Overview / 项目概述
+## Overview / 项目概述
 
 **MeetingFlow** is a professional meeting room booking system built with **gRPC**, **TypeScript**, **Node.js**, and **React**. It features a high-performance gRPC backend and a premium, minimalist dark-mode web dashboard.
 
@@ -12,22 +12,22 @@
 
 ---
 
-## ✨ Features / 功能特性
+## Features / 功能特性
 
-- 🔌 **gRPC Communication** — Strict Proto3 interface implementation for reliable distributed communication.
+- **gRPC Communication** — Strict Proto3 interface implementation for reliable distributed communication.
   - **gRPC 通信** — 严格的 Proto3 接口实现，确保可靠的分布式通信。
-- 🛡️ **Smart Conflict Detection** — Real-time logic to prevent overlapping bookings in the same room.
+- **Smart Conflict Detection** — Real-time logic to prevent overlapping bookings in the same room.
   - **智能冲突检测** — 实时逻辑防止同一房间的预约时间重叠。
-- 🖥️ **Premium Web Dashboard** — Glassmorphism UI with real-time statistics, search, and booking status.
+- **Premium Web Dashboard** — Glassmorphism UI with real-time statistics, search, and booking status.
   - **高级网页仪表盘** — 毛玻璃风格 UI，支持实时统计、搜索和预约状态展示。
-- 💻 **Interactive CLI Client** — Beautiful terminal experience for developers.
+- **Interactive CLI Client** — Beautiful terminal experience for developers.
   - **交互式命令行客户端** — 为开发者提供的精美终端体验。
-- 💾 **Persistent Storage** — Power by SQLite with Prisma ORM.
+- **Persistent Storage** — Power by SQLite with Prisma ORM.
   - **持久化存储** — 使用 Prisma ORM 配合 SQLite。
 
 ---
 
-## 🏗️ Architecture / 系统架构
+## Architecture / 系统架构
 
 ```mermaid
 graph TD
@@ -39,9 +39,10 @@ graph TD
 
 ---
 
-## 📦 Quick Start / 快速上手
+## Quick Start / 快速上手
 
 ### 1. Installation / 安装
+
 ```bash
 # Install root dependencies / 安装根目录下依赖
 npm install
@@ -51,6 +52,7 @@ npm install --prefix client-web
 ```
 
 ### 2. Database Setup / 数据库设置
+
 ```bash
 npm run db:migrate
 # Optional: Seed sample data / 可选：注入演示数据
@@ -58,6 +60,7 @@ npx ts-node prisma/seed.ts
 ```
 
 ### 3. Run / 运行
+
 ```bash
 # Start all services (Server + Web) / 启动所有服务（服务端 + 网页）
 npm run dev
@@ -68,7 +71,7 @@ npm run cli
 
 ---
 
-## 📡 API Reference / 接口参考
+## API Reference / 接口参考
 
 | Method / 方法 | Description / 描述 |
 |---|---|
@@ -79,7 +82,7 @@ npm run cli
 
 ---
 
-## <a name="中文内容"></a> 🎨 预览与设计 (Project Preview)
+## 预览与设计 (Project Preview)
 
 - **Web UI**: React 19 + Tailwind v4 + Framer Motion.
 - **Backend**: Node.js + gRPC-js.
