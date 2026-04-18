@@ -1,113 +1,56 @@
-# MeetingFlow: High-Quality RPC Meeting Management System
+# MeetingFlow Design Document / 项目设计文档
 
-> **Developer Directive:** Read this document before writing any code. Update it immediately after every code change.
-
-## 1. Project Overview
-
-MeetingFlow is a distributed meeting room booking system built with **Node.js**, **TypeScript**, and **gRPC**. It fulfills the Xidian University course requirements while also serving as a professional GitHub portfolio project.
-
-## 2. Technical Stack
-
-| Component | Technology | Version | Rationale |
-| :--- | :--- | :--- | :--- |
-| **Communication** | gRPC (Proto3) | `@grpc/grpc-js` v1.14 | Industry standard, strong typing |
-| **Language** | TypeScript | v6 | Type safety, professional |
-| **Runtime** | Node.js | v18+ | gRPC support |
-| **Database** | SQLite + Prisma ORM | v7.7 | Persistent, zero-config |
-| **CLI Client** | `@clack/prompts` | v1.2 | Interactive, beautiful terminal |
-| **Web Frontend** | React + Vite + Tailwind v4 | Vite v8 | Modern, fast, premium UI |
-| **Web Framework** | Express | v5 | REST API gateway |
-
-## 3. System Architecture
-
-```mermaid
-graph TD
-    subgraph Clients
-        CLI[CLI Client<br/>client-cli/index.ts]
-        Web[Web Dashboard<br/>React + Vite]
-    end
-
-    subgraph Server [server/index.ts — Dual-Mode Server]
-        gRPC[gRPC Server<br/>port 50051]
-        REST[REST API Gateway<br/>Express, port 3001]
-    end
-
-    CLI -->|gRPC Protocol| gRPC
-    Web -->|HTTP/JSON| REST
-    gRPC -->|Prisma ORM| DB[(SQLite dev.db)]
-    REST -->|Prisma ORM| DB
-```
-
-## 4. RPC Interface (Core Requirements)
-
-File: `proto/meeting.proto`
-
-| Method | Request | Response | Description |
-|:---|:---|:---|:---|
-| `BookMeeting` | `Meeting` | `BookResponse` | Create with conflict detection |
-| `QueryById` | `QueryByIdRequest` | `Meeting` | Get by ID |
-| `QueryByOrganizer` | `QueryByOrganizerRequest` | `MeetingList` | Get all for organizer |
-| `CancelMeeting` | `CancelMeetingRequest` | `CancelResponse` | Delete booking |
-
-## 5. REST API (Web Dashboard Gateway)
-
-Base: `http://localhost:3001/api`
-
-| Method | Path | Description |
-|:---|:---|:---|
-| `GET` | `/meetings` | List all meetings |
-| `GET` | `/meetings/stats` | Dashboard statistics |
-| `GET` | `/meetings/:id` | Get single meeting |
-| `POST` | `/meetings` | Create meeting (with conflict check) |
-| `DELETE` | `/meetings/:id` | Cancel meeting |
-
-## 6. Data Model
-
-| Field | Type | Description |
-| :--- | :--- | :--- |
-| `id` | Integer | Auto-increment unique ID |
-| `organizer` | String | Name of organizer |
-| `roomName` | String | Room identifier |
-| `subject` | String | Meeting topic |
-| `startTime` | DateTime | ISO 8601 / stored as DB DateTime |
-| `endTime` | DateTime | ISO 8601 / stored as DB DateTime |
-| `participants` | Integer | Number of attendees |
-
-## 7. Web Dashboard Components
-
-| Component | File | Purpose |
-|:---|:---|:---|
-| `App` | `App.tsx` | Main layout, data fetching, search, auto-refresh |
-| `StatsBar` | `components/StatsBar.tsx` | 4-card statistics (total, rooms, participants, completed) |
-| `MeetingCard` | `components/MeetingCard.tsx` | Individual meeting row with status badge |
-| `StatusBadge` | `components/StatusBadge.tsx` | Auto-computed Upcoming/Ongoing/Completed badge |
-| `BookingModal` | `components/BookingModal.tsx` | Full booking form modal with conflict error feedback |
-
-## 8. Scripts
-
-| Command | Description |
-|:---|:---|
-| `npm run server` | Start gRPC + REST server |
-| `npm run cli` | Start interactive CLI |
-| `npm run web:dev` | Start web dashboard (dev mode) |
-| `npm run dev` | Start server + web concurrently |
-| `npm run db:migrate` | Apply DB schema migrations |
-| `npm run db:studio` | Open Prisma visual DB browser |
-
-## 9. Implementation Workflow
-
-1. [x] **Phase 0**: Design document
-2. [x] **Phase 1**: Proto definition + gRPC server + SQLite  
-3. [x] **Phase 2**: CLI interactive client
-4. [x] **Phase 3**: Web dashboard (full CRUD + stats)
-5. [x] **Phase 4**: Polish — README, gitignore, scripts, TS fix, Tailwind v4 migration
-6. [x] **Phase 5**: Verification — TypeScript passes, Vite build passes
-
-## 10. Known Issues / Decisions
-
-- **Prisma v7**: Uses `require('@prisma/client')` in server code due to v7's TS type export changes
-- **Tailwind v4**: Uses `@import "tailwindcss"` + `@theme {}` block instead of `tailwind.config.js`
-- **tsconfig**: Uses `node10` module resolution with `ignoreDeprecations: "6.0"` for TS6 compatibility
+> **Guideline / 准则**: Read this before coding. Update after every change. / 开发前阅读，变更后立即更新。
 
 ---
-*Created on: 2026-04-18 | Last Updated: 2026-04-18 (Full upgrade)*
+
+## 1. Project Overview / 项目概况
+
+**EN**: MeetingFlow is a distributed booking system fulfilling university course requirements while maintaining professional engineering standards.
+**ZH**: MeetingFlow 是一个满足大学课程要求并保持专业工程标准的分布式预约系统。
+
+## 2. Technical Stack / 技术栈
+
+| Component / 组件 | Technology / 技术 | Rationale / 理由 |
+| :--- | :--- | :--- |
+| **RPC** | gRPC (Proto3) | Industry standard for strong typing / 工业级强类型标准 |
+| **Language / 语言** | TypeScript v6 | Type safety & maintainability / 类型安全与可维护性 |
+| **Frontend / 前端** | React + Tailwind v4 | High-performance premium UI / 高性能、高质量 UI |
+| **DB / 数据库** | Prisma + SQLite | Easy to deploy, zero config / 易于部署，零配置 |
+
+## 3. Architecture / 架构设计
+
+**EN**: The system uses a **Dual-Mode Server** (gRPC + REST Gateway) to support both native binary protocols and browser-based HTTP clients.
+**ZH**: 系统采用**双模服务器**（gRPC + REST 网关），同时支持原生二进制协议和基于浏览器的 HTTP 客户端。
+
+```mermaid
+graph LR
+    User --> CLI
+    User --> Web
+    CLI -->|gRPC| Server
+    Web -->|JSON| Gateway
+    Gateway --> Server
+    Server --> SQLite
+```
+
+## 4. Business Logic / 业务逻辑
+
+### Conflict Detection / 冲突检测
+- **Logic**: A meeting is rejected if `new.startTime < existing.endTime` AND `new.endTime > existing.startTime` for the same room.
+- **逻辑**: 如果同一房间满足 `新开始时间 < 已有结束时间` 且 `新结束时间 > 已有开始时间`，则视为冲突。
+
+## 5. Web Dashboard Structure / 网页仪表盘结构
+
+- **StatsBar**: Real-time aggregation of booking data. / 预约数据的实时聚合统计。
+- **MeetingCard**: Dynamic status display (Upcoming/Ongoing/Finished). / 动态状态展示（即将、进行中、已结束）。
+- **BookingModal**: Form with real-time server validation. / 带实时服务器验证的预约表单。
+
+## 6. Implementation Status / 实现进度
+
+1. [x] Phase 1: Core gRPC Server & SQLite / 核心服务端与数据库
+2. [x] Phase 2: CLI Client / 命令行客户端
+3. [x] Phase 3: Web REST Gateway & Dashboard / Web 网关与仪表盘
+4. [x] Phase 4: Bilingual Documentation / 双语文档完善
+
+---
+*Last Updated / 最后更新: 2026-04-18*

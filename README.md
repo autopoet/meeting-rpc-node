@@ -1,166 +1,91 @@
 # MeetingFlow
 
-> A professional meeting room booking system built with **gRPC**, **TypeScript**, **Node.js**, and **React**.
-
-[![Node.js](https://img.shields.io/badge/Node.js-18+-green?logo=node.js)](https://nodejs.org)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://typescriptlang.org)
-[![gRPC](https://img.shields.io/badge/gRPC-Proto3-orange?logo=grpc)](https://grpc.io)
-[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)](https://react.dev)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
-
-## ✨ Features
-
-- 🔌 **gRPC Communication** — All 4 core RPC methods implemented in strict Proto3: `bookMeeting`, `queryById`, `queryByOrganizer`, `cancelMeeting`
-- 🛡️ **Smart Conflict Detection** — Automatically rejects overlapping bookings for the same room with clear error messages
-- 💻 **Interactive CLI Client** — A beautiful terminal client using `@clack/prompts` with spinners and color output
-- 🖥️ **Premium Web Dashboard** — A minimalist dark-mode React UI with:
-  - Real-time statistics (total bookings, active rooms, participants)
-  - One-click booking modal with form validation
-  - Live search and filter across all fields
-  - Automatic status badges (Upcoming / Ongoing / Completed)
-  - Auto-refresh every 30 seconds
-- 💾 **Persistent Storage** — SQLite database via Prisma ORM
-- 🌐 **REST API Gateway** — Express HTTP bridge for browser compatibility
-
-## 🏗️ Architecture
-
-```
-┌─────────────────────┐    gRPC (port 50051)    ┌──────────────────────────┐
-│   CLI Client        │ ──────────────────────▶ │                          │
-│ (client-cli/)       │                         │    gRPC Server           │
-└─────────────────────┘                         │    (server/index.ts)     │
-                                                │                          │
-┌─────────────────────┐    HTTP (port 3001)     │    + REST API Gateway    │
-│   Web Dashboard     │ ──────────────────────▶ │      (Express)           │
-│ (client-web/)       │                         │                          │
-└─────────────────────┘                         └──────────┬───────────────┘
-                                                           │ Prisma ORM
-                                                           ▼
-                                                   ┌──────────────┐
-                                                   │  SQLite DB   │
-                                                   │  (prisma/    │
-                                                   │   dev.db)    │
-                                                   └──────────────┘
-```
-
-## 🚀 Quick Start
-
-### Prerequisites
-- **Node.js** v18 or higher
-- **npm** v8 or higher
-
-### 1. Clone & Install
-
-```bash
-git clone https://github.com/your-username/meeting-rpc-node.git
-cd meeting-rpc-node
-
-# Install root dependencies (server + CLI)
-npm install
-
-# Install web dashboard dependencies
-npm install --prefix client-web
-```
-
-### 2. Initialize Database
-
-```bash
-npm run db:migrate
-```
-
-### 3. Run (choose your mode)
-
-**Start everything at once (recommended):**
-```bash
-npm run dev
-```
-
-**Or start individually:**
-```bash
-# Terminal 1: Start gRPC server + REST gateway
-npm run server
-
-# Terminal 2: Start web dashboard
-npm run web:dev
-
-# Terminal 3: Start interactive CLI
-npm run cli
-```
-
-### 4. Access
-
-| Service | URL |
-|---|---|
-| Web Dashboard | http://localhost:5173 |
-| REST API | http://localhost:3001/api/meetings |
-| gRPC Server | localhost:50051 |
-
-## 📡 RPC Interface Reference
-
-All interfaces defined in [`proto/meeting.proto`](proto/meeting.proto):
-
-| Method | Request | Response | Description |
-|---|---|---|---|
-| `BookMeeting` | `Meeting` | `BookResponse` | Create booking with conflict check |
-| `QueryById` | `QueryByIdRequest` | `Meeting` | Get single booking by ID |
-| `QueryByOrganizer` | `QueryByOrganizerRequest` | `MeetingList` | Get all bookings by organizer |
-| `CancelMeeting` | `CancelMeetingRequest` | `CancelResponse` | Delete a booking |
-
-### Meeting Data Model
-
-```protobuf
-message Meeting {
-  int32  id           = 1;  // Auto-generated unique ID
-  string organizer    = 2;  // Organizer's name
-  string roomName     = 3;  // Room identifier
-  string subject      = 4;  // Meeting topic
-  string startTime    = 5;  // ISO 8601 datetime
-  string endTime      = 6;  // ISO 8601 datetime
-  int32  participants = 7;  // Number of attendees
-}
-```
-
-## 📁 Project Structure
-
-```
-meeting-rpc-node/
-├── proto/
-│   └── meeting.proto          # gRPC interface definition
-├── server/
-│   └── index.ts               # gRPC server + REST API gateway
-├── client-cli/
-│   └── index.ts               # Interactive terminal client
-├── client-web/
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── BookingModal.tsx
-│   │   │   ├── MeetingCard.tsx
-│   │   │   ├── StatsBar.tsx
-│   │   │   └── StatusBadge.tsx
-│   │   ├── App.tsx
-│   │   └── index.css
-│   └── package.json
-├── prisma/
-│   └── schema.prisma          # Database schema
-├── docs/
-│   └── design.md              # Architecture & design doc
-└── package.json
-```
-
-## 🔧 Troubleshooting
-
-**Server won't start:**
-- Ensure the database is initialized: `npm run db:migrate`
-- Check that port `50051` and `3001` are not in use
-
-**Web dashboard shows "Cannot connect":**
-- Make sure `npm run server` is running first
-- Check CORS: the server must be at `http://localhost:3001`
-
-**CLI shows RPC error:**
-- The gRPC server must be running on `localhost:50051`
-- Run `npm run server` in a separate terminal
+[English](./README.md) | [中文](./README.md#中文内容)
 
 ---
 
-*Course project — Xidian University · Computer Networks & Distributed Systems*
+## 🚀 Overview / 项目概述
+
+**MeetingFlow** is a professional meeting room booking system built with **gRPC**, **TypeScript**, **Node.js**, and **React**. It features a high-performance gRPC backend and a premium, minimalist dark-mode web dashboard.
+
+**MeetingFlow** 是一个基于 **gRPC**、**TypeScript**、**Node.js** 和 **React** 构建的专业会议室预约系统。它拥有高性能的 gRPC 后端以及简约高级的暗黑模式网页仪表盘。
+
+---
+
+## ✨ Features / 功能特性
+
+- 🔌 **gRPC Communication** — Strict Proto3 interface implementation for reliable distributed communication.
+  - **gRPC 通信** — 严格的 Proto3 接口实现，确保可靠的分布式通信。
+- 🛡️ **Smart Conflict Detection** — Real-time logic to prevent overlapping bookings in the same room.
+  - **智能冲突检测** — 实时逻辑防止同一房间的预约时间重叠。
+- 🖥️ **Premium Web Dashboard** — Glassmorphism UI with real-time statistics, search, and booking status.
+  - **高级网页仪表盘** — 毛玻璃风格 UI，支持实时统计、搜索和预约状态展示。
+- 💻 **Interactive CLI Client** — Beautiful terminal experience for developers.
+  - **交互式命令行客户端** — 为开发者提供的精美终端体验。
+- 💾 **Persistent Storage** — Power by SQLite with Prisma ORM.
+  - **持久化存储** — 使用 Prisma ORM 配合 SQLite。
+
+---
+
+## 🏗️ Architecture / 系统架构
+
+```mermaid
+graph TD
+    CLI[CLI Client / 命令行客户端] -->|gRPC| Server[gRPC Server / 服务端]
+    Web[Web Dashboard / 网页仪表盘] -->|HTTP/JSON| REST[REST Gateway / API 网关]
+    REST --> Server
+    Server --> DB[(SQLite DB)]
+```
+
+---
+
+## 📦 Quick Start / 快速上手
+
+### 1. Installation / 安装
+```bash
+# Install root dependencies / 安装根目录下依赖
+npm install
+
+# Install web dashboard dependencies / 安装网页端依赖
+npm install --prefix client-web
+```
+
+### 2. Database Setup / 数据库设置
+```bash
+npm run db:migrate
+# Optional: Seed sample data / 可选：注入演示数据
+npx ts-node prisma/seed.ts
+```
+
+### 3. Run / 运行
+```bash
+# Start all services (Server + Web) / 启动所有服务（服务端 + 网页）
+npm run dev
+
+# Start CLI in another terminal / 在另一个终端启动命令行
+npm run cli
+```
+
+---
+
+## 📡 API Reference / 接口参考
+
+| Method / 方法 | Description / 描述 |
+|---|---|
+| `BookMeeting` | Create a new reservation / 创建新预约 |
+| `QueryById` | Get details by ID / 按 ID 查询详情 |
+| `QueryByOrganizer` | List by organizer / 按预约人查询 |
+| `CancelMeeting` | Delete a reservation / 取消预约 |
+
+---
+
+## <a name="中文内容"></a> 🎨 预览与设计 (Project Preview)
+
+- **Web UI**: React 19 + Tailwind v4 + Framer Motion.
+- **Backend**: Node.js + gRPC-js.
+- **Persistence**: Prisma v5 + SQLite.
+
+---
+
+*Xidian University · Computer Networks & Distributed Systems Course Project*
+*西安电子科技大学 · 计算机网络与分布式系统课程实验*
