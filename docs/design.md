@@ -17,6 +17,7 @@
 | **Language / 语言** | TypeScript v6 | Type safety & maintainability / 类型安全与可维护性 |
 | **Frontend / 前端** | React + Tailwind v4 | High-performance premium UI / 高性能、高质量 UI |
 | **DB / 数据库** | Prisma + SQLite | Easy to deploy, zero config / 易于部署，零配置 |
+| **DevOps / 部署** | Docker Compose | Professional containerized delivery / 专业级容器化交付 |
 
 ## 3. Architecture / 架构设计
 
@@ -51,6 +52,7 @@ graph LR
 2. [x] Phase 2: CLI Client / 命令行客户端
 3. [x] Phase 3: Web REST Gateway & Dashboard / Web 网关与仪表盘
 4. [x] Phase 4: Bilingual Documentation / 双语文档完善
+5. [x] Phase 5: Docker Containerization / Docker 容器化交付环境
 
 ---
-*Last Updated / 最后更新: 2026-04-18*
+*Last Updated / 最后更新: 2026-04-19*
