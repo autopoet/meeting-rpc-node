@@ -1,0 +1,52 @@
+{
+  "name": "meeting-rpc-node",
+  "version": "1.0.0",
+  "description": "A full-stack meeting room booking system powered by gRPC, TypeScript, SQLite, and React.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "server": "ts-node server/index.ts",
+    "cli": "ts-node client-cli/index.ts",
+    "web:dev": "npm run dev --prefix client-web",
+    "dev": "concurrently \"npm run server\" \"npm run web:dev\"",
+    "db:migrate": "npx prisma migrate dev",
+    "db:studio": "npx prisma studio",
+    "db:reset": "npx prisma migrate reset --force"
+  },
+  "keywords": [
+    "grpc",
+    "typescript",
+    "rpc",
+    "meeting",
+    "booking",
+    "react"
+  ],
+  "author": "",
+  "license": "MIT",
+  "type": "commonjs",
+  "dependencies": {
+    "@clack/prompts": "^1.2.0",
+    "@grpc/grpc-js": "^1.14.3",
+    "@grpc/proto-loader": "^0.8.0",
+    "@prisma/client": "^5.22.0",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "luxon": "^3.7.2",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/luxon": "^3.7.1",
+    "@types/node": "^25.6.0",
+    "concurrently": "^9.2.1",
+    "prisma": "^5.22.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  }
+}

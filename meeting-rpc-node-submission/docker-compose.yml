@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+    ports:
+      - "50051:50051"
+      - "3001:3001"
+    volumes:
+      - ./prisma:/app/prisma
+    environment:
+      - DATABASE_URL=file:./dev.db
+
+  web:
+    build:
+      context: ./client-web
+      dockerfile: Dockerfile.web
+    ports:
+      - "8080:80"
+    depends_on:
+      - server
