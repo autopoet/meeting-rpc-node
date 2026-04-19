@@ -62,11 +62,13 @@ npx ts-node prisma/seed.ts
 ### 3. Run / 运行
 
 #### Option A: One-click Docker (Recommended) / 方案 A: Docker 一键启动 (推荐)
+
 ```bash
 docker-compose up --build
 ```
 
 #### Option B: Manual Start / 方案 B: 手动启动
+
 ```bash
 # Start all services (Server + Web) / 启动所有服务（服务端 + 网页）
 npm run dev
@@ -74,7 +76,6 @@ npm run dev
 # Start CLI in another terminal / 在另一个终端启动命令行
 npm run cli
 ```
-
 
 ---
 
@@ -98,4 +99,4 @@ npm run cli
 ---
 
 *Xidian University · Computer Networks & Distributed Systems Course Project*
-*西安电子科技大学 · 计算机网络与分布式系统课程实验*
+*西安电子科技大学 · 分布式计算系统课程实验*
