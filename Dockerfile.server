@@ -1,0 +1,38 @@
+# 使用 Node 18 作为基础镜像
+FROM node:18-slim AS builder
+
+WORKDIR /app
+
+# 安装 OpenSSL (Prisma 需要)
+RUN apt-get update && apt-get install -y openssl python3 make g++
+
+# 复制依赖定义
+COPY package*.json ./
+COPY prisma ./prisma/
+COPY proto ./proto/
+
+# 安装依赖
+RUN npm install
+
+# 复制源代码并编译
+COPY . .
+RUN npx tsc server/index.ts --outDir dist --esModuleInterop --skipLibCheck
+
+# --- 运行阶段 ---
+FROM node:18-slim
+
+WORKDIR /app
+RUN apt-get update && apt-get install -y openssl
+
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/proto ./proto
+COPY --from=builder /app/prisma ./prisma
+COPY .env ./
+
+# 暴露 gRPC (50051) 和 REST (3001) 端口
+EXPOSE 50051 3001
+
+# 启动前同步数据库结构
+CMD npx prisma db push && node dist/server/index.js
